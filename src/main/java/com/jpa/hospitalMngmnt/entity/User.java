@@ -29,10 +29,11 @@ public class User implements UserDetails {
 
     @JoinColumn(unique = true)
     private String username;
+
     private String password;
 
     private String providerId;
-
+    private String providerType;
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     Set<RoleType> roles = new HashSet<>();

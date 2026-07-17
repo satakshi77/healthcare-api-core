@@ -26,29 +26,26 @@ import static com.jpa.hospitalMngmnt.entity.type.RoleType.ADMIN;
 @Slf4j
 @EnableMethodSecurity
 public class WebSecurityConfig {
-private final JwtAuthFilter jwtAuthFilter;
-private final  HandlerExceptionResolver handlerExceptionResolver;
+    private final JwtAuthFilter jwtAuthFilter;
+
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .csrf(csrfConfig ->csrfConfig.disable())
+                .csrf(csrfConfig -> csrfConfig.disable())
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                "/public/**","/auth/**").permitAll()
-               .requestMatchers("/admin/**").hasRole(ADMIN.name())
-                                .requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyAuthority(PermissionType.APPOINTMENT_DELETE.name(),PermissionType.USER_MANAGE.name())
-                .requestMatchers("/doctors/**").hasAnyRole(RoleType.DOCTOR.name(),ADMIN.name())
+                        .requestMatchers("/public/**", "/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/admin/**").hasRole(ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyAuthority(PermissionType.APPOINTMENT_DELETE.name(), PermissionType.USER_MANAGE.name())
+                        .requestMatchers("/doctors/**").hasAnyRole(RoleType.DOCTOR.name(), ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exceptionHandlingConfigurer ->
-                        exceptionHandlingConfigurer.accessDeniedHandler((request, response, accessDeniedException) -> {
-                            handlerExceptionResolver.resolveException(request, response, null, accessDeniedException);
-                        }));
+                .exceptionHandling(ex -> ex.authenticationEntryPoint((request, response, authException) -> {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                }));
 
         return httpSecurity.build();
     }
-
 }
