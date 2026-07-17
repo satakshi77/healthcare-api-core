@@ -4,6 +4,7 @@ import com.jpa.hospitalMngmnt.dto.DoctorResponseDto;
 import com.jpa.hospitalMngmnt.dto.OnboardDoctorRequestDto;
 import com.jpa.hospitalMngmnt.entity.Doctor;
 import com.jpa.hospitalMngmnt.entity.User;
+import com.jpa.hospitalMngmnt.entity.UserRole;
 import com.jpa.hospitalMngmnt.entity.type.RoleType;
 import com.jpa.hospitalMngmnt.repository.DoctorRepository;
 import com.jpa.hospitalMngmnt.repository.UserRepository;
@@ -44,7 +45,15 @@ public class DoctorService {
                 .user(user)
                 .build();
 
-        user.getRoles().add(RoleType.DOCTOR);
+        UserRole doctorRole = UserRole.builder()
+                .role(RoleType.DOCTOR)
+                .user(user)
+                .build();
+
+        user.getRoles().add(doctorRole);
+
+        userRepository.save(user);
+
 
         return modelMapper.map(doctorRepository.save(doctor), DoctorResponseDto.class);
     }

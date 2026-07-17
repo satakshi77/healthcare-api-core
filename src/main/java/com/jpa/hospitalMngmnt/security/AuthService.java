@@ -16,6 +16,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.jpa.hospitalMngmnt.entity.UserRole;
+import java.util.stream.Collectors;
 
 import java.util.Set;
 
@@ -46,12 +48,24 @@ public class AuthService {
             throw new IllegalArgumentException("User Already Exists");
         }
 
-
-        User savedUser = userRepository.save(User.builder()
+        User user = User.builder()
                 .username(signupRequestDto.getUsername())
                 .password(passwordEncoder.encode(signupRequestDto.getPassword()))
-                .roles(signupRequestDto.getRoles())
-                .build());
+                .build();
+
+
+        Set<UserRole> userRoles = signupRequestDto.getRoles()
+                .stream()
+                .map(roleType -> UserRole.builder()
+                        .role(roleType)
+                        .user(user)
+                        .build())
+                .collect(Collectors.toSet());
+
+
+        user.setRoles(userRoles);
+
+        User savedUser = userRepository.save(user);
 
 
         Patient patient = Patient.builder()
@@ -62,6 +76,10 @@ public class AuthService {
 
         patientRepository.save(patient);
 
-        return new SignupResponseDto(savedUser.getId(), savedUser.getUsername());
+
+        return new SignupResponseDto(
+                savedUser.getId(),
+                savedUser.getUsername()
+        );
     }
 }

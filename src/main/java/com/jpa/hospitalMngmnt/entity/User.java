@@ -34,21 +34,28 @@ public class User implements UserDetails {
 
     private String providerId;
     private String providerType;
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    Set<RoleType> roles = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserRole> roles = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
         Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-        roles.forEach(
-                role -> {
-                    Set<SimpleGrantedAuthority> permissions = RolePermissionMapping.getAuthoritiesForRole(role);
-                    authorities.addAll(permissions);
-                    authorities.add(new SimpleGrantedAuthority("ROLE_"+role.name()));
-                }
-        );
+
+        roles.forEach(userRole -> {
+
+            RoleType role = userRole.getRole();
+
+            Set<SimpleGrantedAuthority> permissions =
+                    RolePermissionMapping.getAuthoritiesForRole(role);
+
+            authorities.addAll(permissions);
+
+            authorities.add(
+                    new SimpleGrantedAuthority("ROLE_" + role.name())
+            );
+        });
+
         return authorities;
-  }
+    }
 }
