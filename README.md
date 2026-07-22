@@ -1,4 +1,4 @@
-#  Hospital Management System
+# Hospital Management System 
 
 A secure Hospital Management REST API built with **Spring Boot** featuring **JWT Authentication**, **Role-Based Access Control (Admin, Doctor & Patient)**, doctor onboarding, patient management, and appointment scheduling.
 
@@ -10,30 +10,26 @@ A secure Hospital Management REST API built with **Spring Boot** featuring **JWT
 - Patient Profile Management
 - Appointment Scheduling
 - Pagination Support
+- DTO-based request and response handling
 - Global Exception Handling
 - Swagger/OpenAPI Documentation
+- Cloud database integration and production deployment
 
 ##  Tech Stack
 
-- Java 21
-- Spring Boot
-- Spring Security
-- Spring Data JPA (Hibernate)
-- MySQL
-- JWT
-- Maven
-- Lombok
-- Swagger / OpenAPI
+- **Backend:** Java 21, Spring Boot, Spring Security
+- **Database:** MySQL, Spring Data JPA (Hibernate)
+- **Security:** JWT Authentication, BCrypt
+- **Tools:** Maven, Lombok, Swagger/OpenAPI, Git, Render
 
-## API Documentation
+## 🌐Live Deployment
 
-```
-http://localhost:8080/api/v1/swagger-ui/index.html
-```
+Backend API:
 
-##  Run Locally
+https://healthcare-api-core-3.onrender.com/
 
-```bash
-./mvnw clean install
-./mvnw spring-boot:run
-```
+##  API Documentation
+
+Swagger UI:
+
+https://healthcare-api-core-3.onrender.com/api/v1/swagger-ui/index.html
