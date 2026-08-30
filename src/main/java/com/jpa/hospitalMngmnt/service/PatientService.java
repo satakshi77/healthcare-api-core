@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ public class PatientService {
     ModelMapper modelMapper = new ModelMapper();
 
     @Transactional
+    @Cacheable(cacheNames = "patient",key="#id")
     public PatientResponseDto getPatientById(Long id){
        Patient patient =  patientRepository.findById(id).orElseThrow();
 

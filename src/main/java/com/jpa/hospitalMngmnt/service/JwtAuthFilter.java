@@ -24,26 +24,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
     private final AuthUtil authUtil;
     private final HandlerExceptionResolver handlerExceptionResolver;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-       try {
+        try {
             log.info("incoming request:{}", request.getRequestURI());
             final String requestTokenHeader = request.getHeader("Authorization");
             if (requestTokenHeader == null || !requestTokenHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;
             }
-            String token = requestTokenHeader.split("Bearer ")[1];
+            String token = requestTokenHeader.substring(7);
             String username = authUtil.getUsernameFromToken(token);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                User user = userRepository.findByUsername(username).orElseThrow();
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                User user = userRepository.findByUsername(username)
+                        .orElseThrow(() -> new RuntimeException("User not found in database: " + username));
+
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
             filterChain.doFilter(request, response);
+
+        } catch (io.jsonwebtoken.JwtException | IllegalArgumentException e) {
+            log.error("JWT Parsing error: {}", e.getMessage());
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid or expired token");
         } catch (Exception e) {
-           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-           response.getWriter().write("Invalid or expired token");
-       }
+            // This will catch database errors or missing users and PRINT them
+            log.error("Critical security filter failure: ", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("Internal Server Error during authentication. Check server logs.");
+        }
     }
 }

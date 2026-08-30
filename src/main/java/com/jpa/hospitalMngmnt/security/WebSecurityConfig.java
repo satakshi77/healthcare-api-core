@@ -36,9 +36,9 @@ public class WebSecurityConfig {
                 .sessionManagement(sessionConfig -> sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/public/**", "/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/admin/**").hasRole(ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/admin/**").hasAnyAuthority(PermissionType.APPOINTMENT_DELETE.name(), PermissionType.USER_MANAGE.name())
-                        .requestMatchers("/doctors/**").hasAnyRole(RoleType.DOCTOR.name(), ADMIN.name())
+                        .requestMatchers("/api/v1/admin/**").hasAuthority(ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/api/v1/admin/**").hasAnyAuthority(PermissionType.APPOINTMENT_DELETE.name(), PermissionType.USER_MANAGE.name())
+                        .requestMatchers("/api/v1/doctors/**").hasAnyAuthority(RoleType.DOCTOR.name(), ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

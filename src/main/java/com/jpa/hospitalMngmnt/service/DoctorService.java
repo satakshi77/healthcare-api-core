@@ -11,6 +11,8 @@ import com.jpa.hospitalMngmnt.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,13 +27,15 @@ public class DoctorService {
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
 
-    @Transactional
+    @Transactional(readOnly = true)
+    @Cacheable(value = "doctorsList")
     public List<DoctorResponseDto> getAllDoctors() {
         return doctorRepository.findAll()
                 .stream()
                 .map(doctor -> modelMapper.map(doctor, DoctorResponseDto.class))
                 .collect(Collectors.toList());
     }
+    @CacheEvict(value = "doctorsList" , allEntries = true)
     public DoctorResponseDto onBoardNewDoctor(OnboardDoctorRequestDto onboardDoctorRequestDto){
         User user = userRepository.findById(onboardDoctorRequestDto.getUserId()).orElseThrow();
 
