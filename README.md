@@ -1,6 +1,6 @@
 # Hospital Management System 
 
-A secure Hospital Management REST API built with **Spring Boot** featuring **JWT Authentication**, **Role-Based Access Control (Admin, Doctor & Patient)**, doctor onboarding, patient management, and appointment scheduling.
+A secure Hospital Management REST API built with **Spring Boot** featuring **JWT Authentication**, **Role-Based Access Control (Admin, Doctor & Patient)**, doctor onboarding, patient management, and appointment scheduling,and **Redis-powered** caching for high-performance session and data retrieval.
 
 ##  Features
 
@@ -18,7 +18,7 @@ A secure Hospital Management REST API built with **Spring Boot** featuring **JWT
 ##  Tech Stack
 
 - **Backend:** Java 21, Spring Boot, Spring Security
-- **Database:** MySQL, Spring Data JPA (Hibernate)
+- **Database & Caching:** MySQL, Spring Data JPA (Hibernate),Redis
 - **Security:** JWT Authentication, BCrypt
 - **Tools:** Maven, Lombok, Swagger/OpenAPI, Git, Render
 
