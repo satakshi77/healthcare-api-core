@@ -33,3 +33,17 @@ https://healthcare-api-core-3.onrender.com/
 Swagger UI:
 
 https://healthcare-api-core-3.onrender.com/api/v1/swagger-ui/index.html
+## 🧪 Testing Suite
+
+A robust automated testing suite covering unit logic, data persistence layers, and REST API endpoints.
+
+- **Frameworks & Tools:** JUnit 5, Mockito, Spring Boot Test (`MockMvc`), H2 Database (isolated persistence tests).
+- **Test Coverage:**
+  - **Repositories:** Validates JPA entity mapping and database operations (`@DataJpaTest`).
+  - **Services:** Pure unit tests covering core business workflows, exceptions, and algorithms.
+  - **Controllers:** REST API integration tests validating payload serialization, HTTP status codes, and Role-Based Access Control (`@WithMockUser`).
+
+### Running Tests Locally
+Execute the complete test suite using the Maven wrapper:
+```bash
+./mvnw test
