@@ -28,13 +28,13 @@ import java.util.List;
 public class Patient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+   // @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column( nullable =false)
     private String name;
 
-    @ToString.Exclude
+    //@ToString.Exclude
     private LocalDate dob;
     private String gender;
 
@@ -43,6 +43,7 @@ public class Patient {
 
     @OneToOne
     @MapsId
+    @ToString.Exclude
     private  User user;
     @Enumerated(EnumType.STRING)
     private BloodGrpType bloodgrp;
@@ -50,6 +51,7 @@ public class Patient {
     @OneToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST} ,orphanRemoval = true)
     private Insurance insurance;
     @OneToMany(mappedBy= "patient",fetch = FetchType.LAZY,cascade = {CascadeType.REMOVE}, orphanRemoval = true)
+    @ToString.Exclude
     private List<Appointment> appointments = new ArrayList<>();
 
 }
